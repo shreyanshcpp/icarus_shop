@@ -876,7 +876,32 @@ const PRODUCTS = [
   {id:9,name:'Graphic Tee — Wings',brand:'ICARUS',category:'shirts',price:699,originalPrice:699,discount:0,rating:4.4,reviews:89,colors:['#1a1a1a','#f5f0e8','#3d2b1a'],sizes:['XS','S','M','L','XL','XXL'],emoji:'👕',bg:'linear-gradient(135deg,#0d0d0d,#1a1a1a)',desc:'Our Icarus wings graphic printed on a 180 GSM combed cotton tee. Minimal on the outside, bold at heart.',features:['180 GSM cotton','Screen print','Regular fit','Round neck','Washed feel']},
   
   {id:11,name:'Linen Overshirt',brand:'ICARUS',category:'shirts',price:1599,originalPrice:2199,discount:27,rating:4.5,reviews:145,colors:['#d4c5a9','#1a2c1a','#1a1a2c'],sizes:['S','M','L','XL'],emoji:'👕',bg:'linear-gradient(135deg,#1a1a08,#2d2d0a)',desc:'Breathable linen overshirt for warm days. Wear open over a tee or buttoned up solo. Either way, you win.',features:['100% Linen','Relaxed fit','Chest pockets','Mother-of-pearl buttons','Garment washed']},
-  
+  {
+  id: 13,
+  name: 'Stays On Tiger Tee Oversized',
+  brand: 'ICARUS',
+  category: 'shirts',
+  price: 699,
+  originalPrice: 799,
+  discount: 13,
+  rating: 4.9,
+  reviews: 0,
+  colors: ['#c0392b'],
+  sizes: ['S','M','L','XL','XXL'],
+  isNew: true,
+  isBestSeller: false,
+  images: ['images
+/WhatsApp Image 2026-06-07 at 00.06.16.jpeg','images
+/WhatsApp Image 2026-06-07 at 00.06.16 (1).jpeg','images
+/WhatsApp Image 2026-06-07 at 00.06.14.jpeg','images
+/WhatsApp Image 2026-06-07 at 00.06.12 (2).jpeg'],
+  image: 'images
+/WhatsApp Image 2026-06-07 at 00.06.16.jpeg',
+  emoji: '👕',
+  bg: 'linear-gradient(135deg,#8B0000,#c0392b)',
+  desc: 'The tiger never sleeps. Stays On Tiger Tee in a heavyweight oversized fit — bold graphic print on premium 240 GSM cotton. Made for those who stay on.',
+  features: ['240 GSM Cotton','Oversized fit','Drop shoulder','Tiger graphic print','Pre-washed feel']
+}
 ];
 
 const ORDERS = [
@@ -942,7 +967,13 @@ function productCard(p, compact=false){
   const stars='★'.repeat(Math.floor(p.rating))+'☆'.repeat(5-Math.floor(p.rating));
   return `<div class="product-card" onclick="openProduct(${p.id})">
     <div class="product-img">
-      <div class="product-img-inner" style="width:100%;height:100%;background:${p.bg};display:flex;align-items:center;justify-content:center;font-size:6rem">${p.emoji}</div>
+    <div class="product-img-inner" style="width:100%;height:100%;background:${p.bg};display:flex;align-items:center;justify-content:center;font-size:6rem" id="img-${p.id}">
+  ${p.images 
+    ? `<img src="${p.images[0]}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover">` 
+    : p.image 
+    ? `<img src="${p.image}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover">`
+    : p.emoji}
+</div>
       ${badge}
       <button class="wishlist-btn ${inWishlist?'active':''}" onclick="toggleWishlist(event,${p.id})" title="${inWishlist?'Remove from':'Add to'} wishlist">${inWishlist?'♥':'♡'}</button>
       <div class="product-actions">
@@ -1030,10 +1061,17 @@ function renderProductDetail(){
     :`<span class="pd-price">₹${p.price.toLocaleString('en-IN')}</span>`;
   document.getElementById('product-detail-content').innerHTML=`
     <div class="pd-images">
-      <div class="pd-main-img"><div style="width:100%;height:100%;background:${p.bg};display:flex;align-items:center;justify-content:center;font-size:14rem">${p.emoji}</div></div>
-      <div class="pd-thumbs">
-        ${[p.emoji,p.emoji,p.emoji].map((e,i)=>`<div class="pd-thumb ${i===0?'active':''}" style="background:${p.bg};font-size:2.5rem;display:flex;align-items:center;justify-content:center">${e}</div>`).join('')}
-      </div>
+     <div class="pd-main-img" id="pd-main-img-wrap">
+  <img src="${p.images ? p.images[0] : p.image || ''}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover" id="pd-main-img-el">
+</div>
+<div class="pd-thumbs">
+  ${(p.images || [p.image]).map((img,i)=>`
+    <div class="pd-thumb ${i===0?'active':''}" 
+      onclick="switchImage(this,'${img}')"
+      style="overflow:hidden">
+      <img src="${img}" style="width:100%;height:100%;object-fit:cover">
+    </div>`).join('')}
+</div>
     </div>
     <div class="pd-info">
       <p class="pd-brand">${p.brand}</p>
@@ -1237,6 +1275,11 @@ function switchTab(id,btn){
   document.querySelectorAll('.profile-tab').forEach(b=>b.classList.remove('active'));
   document.getElementById('tab-'+id).classList.add('active');
   btn.classList.add('active');
+}
+  function switchImage(thumb, src){
+  document.querySelectorAll('.pd-thumb').forEach(t=>t.classList.remove('active'));
+  thumb.classList.add('active');
+  document.getElementById('pd-main-img-el').src = src;
 }
 function saveProfile(){toast('Profile saved ✓');}
 
